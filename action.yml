@@ -1,15 +1,45 @@
-name: Hello
-description: Say hello
+name: Substitute Placeholder Files
+description: Substitutes placeholder files.
 branding:
-  icon: activity
+  icon: file
   color: blue
 inputs:
-  foo:
-    description: Foo
+  target:
+    description: Target file or directory
     required: true
 runs:
   using: composite
   steps:
     - shell: bash
+      env:
+        TARGET: ${{ inputs.target }}
       run: |
-        echo 'Hello, World!'
+        substitute_placeholder_files () {
+          cd "$1"
+          for item in *; do 
+            if [[ -d $item ]]; then
+              substitute_placeholder_files "$item"
+            else
+              substitute_placeholder_file "$item"
+            fi
+          done
+          cd ..
+        }
+
+        substitute_placeholder_file () {
+          item="$1"
+          template="${item%.*}.template.${item##*.}"
+          if [ -f $template ]; then
+            cat $template > $item
+            rm $template
+          fi
+        }
+
+        if [ -d "$TARGET" ]; then
+          substitute_placeholder_files "$TARGET"
+        elif [ -f "$TARGET" ]; then
+          substitute_placeholder_file "$TARGET"
+        else
+          echo "Target file not found: $TARGET"
+          exit 1
+        fi
