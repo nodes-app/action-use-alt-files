@@ -9,5 +9,3 @@ jobs:
 
       - name: Test Action
         uses: ./
-        with:
-          target: .

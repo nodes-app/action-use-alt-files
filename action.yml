@@ -1,5 +1,5 @@
-name: Substitute Placeholder Files
-description: Substitutes placeholder files.
+name: Use Alternative Files
+description: Uses Alternative Files
 branding:
   icon: file
   color: blue
@@ -7,26 +7,28 @@ inputs:
   target:
     description: Target file or directory
     required: true
+    default: .
 runs:
   using: composite
   steps:
+  
     - shell: bash
       env:
         TARGET: ${{ inputs.target }}
       run: |
-        substitute_placeholder_files () {
+        use_alt_files () {
           cd "$1"
           for item in *; do 
             if [[ -d $item ]]; then
-              substitute_placeholder_files "$item"
+              use_alt_files "$item"
             else
-              substitute_placeholder_file "$item"
+              use_alt_file "$item"
             fi
           done
           cd ..
         }
 
-        substitute_placeholder_file () {
+        use_alt_file () {
           item="$1"
           template="${item%.*}.template.${item##*.}"
           if [ -f $template ]; then
@@ -36,9 +38,9 @@ runs:
         }
 
         if [ -d "$TARGET" ]; then
-          substitute_placeholder_files "$TARGET"
+          use_alt_files "$TARGET"
         elif [ -f "$TARGET" ]; then
-          substitute_placeholder_file "$TARGET"
+          use_alt_file "$TARGET"
         else
           echo "Target file not found: $TARGET"
           exit 1
