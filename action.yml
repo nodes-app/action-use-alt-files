@@ -24,8 +24,9 @@ runs:
         use_alternative_files () {
           if [[ -d "$1" ]]; then
             local items=$(ls -A1 "$1" | jq -Rs 'split("\n")[:-1]')
-            if [[ $(echo "$items" | jq length) > 0 ]]; then
-              for (( i=0; i<$(echo "$items" | jq length); i++ )); do
+            local item_count=$(echo "$items" | jq length)
+            if [[ $item_count > 0 ]]; then
+              for (( i=0; i<$item_count; i++ )); do
                 use_alternative_files "$1/$(echo "$items" | jq -r --argjson i $i '.[$i]')"
               done
             fi
