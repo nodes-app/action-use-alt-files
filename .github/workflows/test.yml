@@ -17,6 +17,8 @@ jobs:
         run: |
           expected='# test alt'
           actual=$(cat test/test.md)
+          echo "$expected"
+          echo "$actual"
           if [[ "actual" != "$expected" ]]; then
             echo "Unexpected result: $actual"
             exit 1
