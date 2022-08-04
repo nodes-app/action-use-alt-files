@@ -17,7 +17,7 @@ jobs:
         run: |
           contents=$(ls test)
           if [[ "$contents" != 'test.md' ]]; then
-            echo "unexpected contents: $contents"
+            echo "unexpected directory contents: $contents"
             exit 1
           fi
           expected='# test alt'
