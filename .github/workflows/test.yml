@@ -15,9 +15,14 @@ jobs:
 
       - name: Check Result
         run: |
+          contents=$(ls test)
+          if [[ "$contents" != 'test.md' ]]; then
+            echo "unexpected contents: $contents"
+            exit 1
+          fi
           expected='# test alt'
           actual=$(cat test/test.md)
           if [[ "$actual" != "$expected" ]]; then
-            echo "Unexpected result: $actual"
+            echo "unexpected result: $actual"
             exit 1
           fi
