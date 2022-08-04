@@ -14,12 +14,10 @@ jobs:
           target: test
 
       - name: Check Result
-        env:
-          EXPECTED: |
-            # test alt
         run: |
-          actual="$(cat test/test.md)"
-          if [[ "actual" != "$EXPECTED" ]]; then
+          expected=$(echo -e '# test alt\n')
+          actual=$(cat test/test.md)
+          if [[ "actual" != "$expected" ]]; then
             echo "Unexpected result: $actual"
             exit 1
           fi
