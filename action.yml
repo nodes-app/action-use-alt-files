@@ -23,13 +23,15 @@ runs:
       run: |
         use_alternative_files () {
           if [[ -d "$1" ]]; then
-            local items=$(ls -A1 "$1" | jq -Rs 'split("\n")[:-1]')
-            local item_count=$(echo "$items" | jq length)
-            if [[ $item_count > 0 ]]; then
-              for (( i=0; i<$item_count; i++ )); do
-                use_alternative_files "$1/$(echo "$items" | jq -r --argjson i $i '.[$i]')"
-              done
-            fi
+            for item in "$1"/* "$1"/.[!.]* "$1"/..?*; do
+              case $item in
+                "$1/*"|"$1/.[!.]*"|"$1/..?*") 
+                  ;; # skip
+                *) 
+                  use_alternative_files "$item"
+                  ;;
+              esac
+            done
           elif [[ -f "$1" ]]; then
             local basename=$(basename "$1")
             local alt_file="$(dirname "$1")/${basename%.*}.$KEYWORD.${basename##*.}"
